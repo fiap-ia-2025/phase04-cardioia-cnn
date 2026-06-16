@@ -121,11 +121,11 @@ As transformações realizadas garantiram a padronização dos dados e preparara
 
 ### 📷 Evidências
 
-> Inserir imagem de exemplo do dataset
+> Imagem exemplo do dataset
 
 ![Dataset](img/dataset_exemplo.png)
 
-> Inserir imagem do pré-processamento
+> Imagem do pré-processamento
 
 ![Preprocessamento](img/preprocessamento.png)
 
@@ -180,11 +180,11 @@ A CNN simples conseguiu aprender padrões relevantes presentes nas radiografias,
 
 ### 📷 Evidências
 
-> Inserir print da matriz de confusão
+> Matriz de confusão CNN
 
 ![CNN](img/cnn_matriz_confusao.png)
 
-> Inserir print das métricas
+> Métricas CNN
 
 ![CNN](img/cnn_metricas.png)
 
@@ -228,11 +228,11 @@ O modelo apresentou excelente desempenho na identificação de casos de pneumoni
 
 ### 📷 Evidências
 
-> Inserir print da matriz de confusão
+> Matriz de confusão VGG16
 
 ![VGG16](img/vgg16_matriz_confusao.png)
 
-> Inserir print das métricas
+> Métricas VGG16
 
 ![VGG16](img/vgg16_metricas.png)
 
@@ -260,8 +260,6 @@ Observa-se que o modelo VGG16 apresentou desempenho superior ao modelo desenvolv
 ---
 
 ## 📉 Gráfico Comparativo
-
-> Inserir gráfico de comparação das acurácias
 
 ![Comparação dos Modelos](img/comparacao_modelos.png)
 
