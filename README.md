@@ -123,11 +123,11 @@ As transformações realizadas garantiram a padronização dos dados e preparara
 
 > Inserir imagem de exemplo do dataset
 
-![Dataset](assets/img/dataset_exemplo.png)
+![Dataset](img/dataset_exemplo.png)
 
 > Inserir imagem do pré-processamento
 
-![Preprocessamento](assets/img/preprocessamento.png)
+![Preprocessamento](img/preprocessamento.png)
 
 # 🧠 Parte 2 – Classificação de Imagens Médicas com CNN
 
@@ -182,11 +182,11 @@ A CNN simples conseguiu aprender padrões relevantes presentes nas radiografias,
 
 > Inserir print da matriz de confusão
 
-![CNN](assets/img/cnn_matriz_confusao.png)
+![CNN](img/cnn_matriz_confusao.png)
 
 > Inserir print das métricas
 
-![CNN](assets/img/cnn_metricas.png)
+![CNN](img/cnn_metricas.png)
 
 ---
 
@@ -230,11 +230,11 @@ O modelo apresentou excelente desempenho na identificação de casos de pneumoni
 
 > Inserir print da matriz de confusão
 
-![VGG16](assets/img/vgg16_matriz_confusao.png)
+![VGG16](img/vgg16_matriz_confusao.png)
 
 > Inserir print das métricas
 
-![VGG16](assets/img/vgg16_metricas.png)
+![VGG16](img/vgg16_metricas.png)
 
 ---
 
@@ -263,7 +263,7 @@ Observa-se que o modelo VGG16 apresentou desempenho superior ao modelo desenvolv
 
 > Inserir gráfico de comparação das acurácias
 
-![Comparação dos Modelos](assets/img/comparacao_modelos.png)
+![Comparação dos Modelos](img/comparacao_modelos.png)
 
 ---
 
