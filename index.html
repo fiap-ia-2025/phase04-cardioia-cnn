@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CardioIA Protótipo</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+  
+  <div id="app" class="max-w-4xl mx-auto p-6">
+    <header class="text-center mb-10 mt-8">
+      <h1 class="text-3xl font-bold text-blue-900">CardioIA: Assistente Virtual</h1>
+      <p class="text-gray-600 mt-2">Módulo de Visão Computacional para Diagnóstico por Imagem</p>
+    </header>
+
+    <section v-if="!isProcessing && !result" class="bg-white p-8 rounded-xl shadow-sm border border-gray-200 text-center">
+      <div class="border-2 border-dashed border-blue-300 rounded-lg p-10 hover:bg-blue-50 transition-colors">
+        <input 
+          type="file" 
+          id="imageUpload" 
+          class="hidden" 
+          accept="image/*" 
+          @change="handleFileUpload"
+        />
+        <label for="imageUpload" class="cursor-pointer flex flex-col items-center">
+          <svg class="w-12 h-12 text-blue-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+          <span class="text-lg font-medium text-gray-700">Clique para anexar um raio-X ou ECG</span>
+          <span class="text-sm text-gray-400 mt-1">PNG, JPG ou JPEG</span>
+        </label>
+      </div>
+
+      <div v-if="imagePreview" class="mt-6">
+        <p class="text-sm text-gray-500 mb-2">Imagem selecionada:</p>
+        <img :src="imagePreview" alt="Preview" class="max-h-48 mx-auto rounded shadow-sm" />
+        <button 
+          @click="analyzeImage" 
+          class="mt-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
+        >
+          Iniciar Análise com CNN
+        </button>
+      </div>
+    </section>
+
+    <section v-if="isProcessing" class="bg-white p-12 rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center min-h-[300px]">
+      <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mb-4"></div>
+      <h2 class="text-xl font-semibold text-gray-800">Processando Imagem...</h2>
+      <p class="text-gray-500 mt-2">A Rede Neural Convolucional está extraindo as características.</p>
+    </section>
+
+    <section v-if="result && !isProcessing" class="bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+      <div class="flex flex-col md:flex-row gap-8">
+        
+        <div class="md:w-1/3 border-r border-gray-200 pr-6">
+          <h3 class="text-lg font-semibold text-gray-700 mb-4">Exame Analisado</h3>
+          <img :src="imagePreview" class="w-full rounded border border-gray-200 shadow-sm" />
+          <button 
+            @click="resetAnalysis" 
+            class="w-full mt-6 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded transition-colors"
+          >
+            Nova Análise
+          </button>
+        </div>
+
+        <div class="md:w-2/3">
+          <div class="mb-6 p-4 rounded-lg" :class="result.classe === 'Normal' ? 'bg-green-50 border-l-4 border-green-500' : 'bg-red-50 border-l-4 border-red-500'">
+            <h2 class="text-sm font-bold text-gray-500 uppercase tracking-wide">Diagnóstico Sugerido (IA)</h2>
+            <div class="flex items-end gap-3 mt-1">
+              <span class="text-3xl font-bold text-gray-900">{{ result.classe }}</span>
+              <span class="text-lg font-medium text-gray-600 mb-1">
+                ({{ (result.probabilidade * 100).toFixed(1) }}% de confiança)
+              </span>
+            </div>
+          </div>
+
+          <h3 class="text-lg font-semibold text-gray-700 mb-4">Métricas de Avaliação do Modelo</h3>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+              <p class="text-sm text-gray-500">Acurácia</p>
+              <p class="text-xl font-semibold text-gray-800">{{ (result.metricas.acuracia * 100).toFixed(1) }}%</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+              <p class="text-sm text-gray-500">F1-Score</p>
+              <p class="text-xl font-semibold text-gray-800">{{ result.metricas.f1_score }}</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+              <p class="text-sm text-gray-500">Precisão</p>
+              <p class="text-xl font-semibold text-gray-800">{{ result.metricas.precisao }}</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+              <p class="text-sm text-gray-500">Recall</p>
+              <p class="text-xl font-semibold text-gray-800">{{ result.metricas.recall }}</p>
+            </div>
+          </div>
+          
+          <div class="mt-6 bg-gray-50 p-4 rounded-lg border border-gray-100">
+            <p class="text-sm text-gray-500 mb-2">Matriz de Confusão (Validação)</p>
+            <div class="text-xs text-gray-600 bg-white p-3 border rounded font-mono">
+               {{ result.metricas.matriz_confusao }}
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const { createApp, ref } = Vue;
+
+    createApp({
+      setup() {
+        const imageFile = ref(null);
+        const imagePreview = ref(null);
+        const isProcessing = ref(false);
+        const result = ref(null);
+
+        const handleFileUpload = (event) => {
+          const target = event.target;
+          if (target.files && target.files[0]) {
+            imageFile.value = target.files[0];
+            imagePreview.value = URL.createObjectURL(target.files[0]);
+          }
+        };
+
+        const analyzeImage = async () => {
+          if (!imageFile.value) return;
+          
+          isProcessing.value = true;
+          
+          // Simula o tempo de processamento da IA (2.5 segundos)
+          await new Promise(resolve => setTimeout(resolve, 2500)); 
+          
+          // DADOS REAIS DO MODELO VGG16 (TRANSFER LEARNING)
+          result.value = {
+            classe: "PNEUMONIA",
+            probabilidade: 0.985, // 98.5% de confiança (valor ilustrativo para o print)
+            metricas: {
+              acuracia: 0.79, // 79,01%
+              f1_score: 0.86, // F1-Score da classe Pneumonia
+              precisao: 0.75, // Precision da classe Pneumonia
+              recall: 0.99,   // Recall incrível de 99% da classe Pneumonia
+              matriz_confusao: "[[105, 129], [3, 387]]" 
+            }
+          };
+
+          isProcessing.value = false;
+        };
+
+        const resetAnalysis = () => {
+          imageFile.value = null;
+          imagePreview.value = null;
+          result.value = null;
+        };
+
+        return {
+          imageFile,
+          imagePreview,
+          isProcessing,
+          result,
+          handleFileUpload,
+          analyzeImage,
+          resetAnalysis
+        }
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>
