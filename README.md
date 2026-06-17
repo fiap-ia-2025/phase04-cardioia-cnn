@@ -292,6 +292,21 @@ Com base nos resultados obtidos, o modelo **VGG16** foi considerado a melhor abo
 Dessa forma, o VGG16 demonstrou maior potencial para utilização em sistemas de apoio à análise de exames médicos baseados em imagens.
 
 ---
+## 🖥️ Protótipo de Interface — index.html
+
+Foi desenvolvida uma interface web interativa que simula o fluxo completo do assistente:
+
+- Upload do exame (raio-X ou ECG)
+- Processamento simulado pela CNN
+- Exibição do diagnóstico com métricas do modelo VGG16
+
+O protótipo utiliza os resultados reais obtidos no treinamento do modelo VGG16. A classificação exibida é ilustrativa, demonstrando como os resultados seriam apresentados ao usuário final em uma aplicação real.
+
+Tecnologias: HTML5 · Vue.js 3 · Tailwind CSS
+
+Para visualizar: abra o arquivo index.html diretamente no navegador.
+
+---
 
 # 🏁 Conclusão
 
